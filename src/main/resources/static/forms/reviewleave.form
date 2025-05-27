@@ -1,0 +1,92 @@
+{
+  "components": [
+    {
+      "label": "Employee Name",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_1fj2u9f",
+        "columns": null
+      },
+      "id": "Field_0w9usv1",
+      "key": "employeeName",
+      "description": "Name of the Employee",
+      "validate": {
+        "required": true
+      }
+    },
+    {
+      "label": "Email",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_17lc02s",
+        "columns": null
+      },
+      "id": "Field_02u9nk3",
+      "key": "employeeEmail",
+      "validate": {
+        "required": true,
+        "validationType": "email"
+      }
+    },
+    {
+      "label": "Reason",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_0wcej1n",
+        "columns": null
+      },
+      "id": "Field_1yexwgm",
+      "key": "textfield_ar71qv",
+      "description": "Reason for Leave"
+    },
+    {
+      "label": "Days",
+      "type": "number",
+      "layout": {
+        "row": "Row_05lsjfg",
+        "columns": null
+      },
+      "id": "Field_15v630m",
+      "key": "leaveDays",
+      "description": "No. of Days",
+      "validate": {
+        "required": true,
+        "min": "1",
+        "max": "30"
+      },
+      "increment": "1"
+    },
+    {
+      "label": "Review Decision",
+      "values": [
+        {
+          "label": "Accept",
+          "value": "Accept"
+        },
+        {
+          "label": "Reject",
+          "value": "Reject"
+        }
+      ],
+      "type": "radio",
+      "layout": {
+        "row": "Row_0nhrexj",
+        "columns": null
+      },
+      "id": "Field_04m69q6",
+      "key": "reviewAction",
+      "validate": {
+        "required": true
+      }
+    }
+  ],
+  "type": "default",
+  "id": "reviewLeave",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.35.0"
+  },
+  "executionPlatform": "Camunda Platform",
+  "executionPlatformVersion": "7.23.0",
+  "schemaVersion": 18
+}

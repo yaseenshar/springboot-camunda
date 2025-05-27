@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_08z6xbp" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.35.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.23.0">
+  <bpmn:process id="leave-management-2" name="Leave management - 2" isExecutable="true" camunda:historyTimeToLive="1">
+    <bpmn:startEvent id="startEvent" name="Start Event">
+      <bpmn:outgoing>Flow_0pxqmdf</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_0pxqmdf" sourceRef="startEvent" targetRef="applyLeave" />
+    <bpmn:sequenceFlow id="Flow_0qv03oz" sourceRef="applyLeave" targetRef="reviewLeave" />
+    <bpmn:endEvent id="endEvent" name="End Event">
+      <bpmn:incoming>Flow_0tmpb82</bpmn:incoming>
+      <bpmn:incoming>Flow_1ydwvdj</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="applyLeave" name="Apply Leave" camunda:formKey="camunda-forms:/forms/applyleave.form" camunda:candidateUsers="admin">
+      <bpmn:extensionElements />
+      <bpmn:incoming>Flow_0pxqmdf</bpmn:incoming>
+      <bpmn:outgoing>Flow_0qv03oz</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="reviewLeave" name="Review Leave" camunda:formKey="camunda-forms:/forms/reviewleave.form" camunda:candidateUsers="admin">
+      <bpmn:incoming>Flow_0qv03oz</bpmn:incoming>
+      <bpmn:outgoing>Flow_1m94jcu</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="leaveDecission" name="Leave Decission">
+      <bpmn:incoming>Flow_1m94jcu</bpmn:incoming>
+      <bpmn:outgoing>flowReject</bpmn:outgoing>
+      <bpmn:outgoing>flowAccept</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1m94jcu" sourceRef="reviewLeave" targetRef="leaveDecission" />
+    <bpmn:sequenceFlow id="flowReject" name="Reject" sourceRef="leaveDecission" targetRef="notifyEmployee">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{reviewAction == 'Reject'}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flowAccept" name="Accept" sourceRef="leaveDecission" targetRef="notifyHR">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{reviewAction == 'Accept'}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0tmpb82" sourceRef="notifyEmployee" targetRef="endEvent" />
+    <bpmn:sequenceFlow id="Flow_1sprm54" sourceRef="notifyHR" targetRef="updateDB" />
+    <bpmn:sequenceFlow id="Flow_1ydwvdj" sourceRef="updateDB" targetRef="endEvent" />
+    <bpmn:serviceTask id="notifyEmployee" name="Notify Employee" camunda:delegateExpression="${notifyRejectionDelegate}">
+      <bpmn:incoming>flowReject</bpmn:incoming>
+      <bpmn:outgoing>Flow_0tmpb82</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="notifyHR" name="Notify HR" camunda:delegateExpression="${notifyHRDelegate}">
+      <bpmn:incoming>flowAccept</bpmn:incoming>
+      <bpmn:outgoing>Flow_1sprm54</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="updateDB" name="Update DB" camunda:delegateExpression="${notifyHRDelegate}">
+      <bpmn:incoming>Flow_1sprm54</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ydwvdj</bpmn:outgoing>
+    </bpmn:serviceTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="leave-management-2">
+      <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="startEvent">
+        <dc:Bounds x="182" y="232" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="173" y="275" width="56" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1ih84ib_di" bpmnElement="applyLeave">
+        <dc:Bounds x="270" y="210" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1jju3rg_di" bpmnElement="reviewLeave">
+        <dc:Bounds x="430" y="210" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_10ztac3_di" bpmnElement="endEvent">
+        <dc:Bounds x="882" y="232" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="874" y="275" width="52" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_04ztdq5_di" bpmnElement="leaveDecission" isMarkerVisible="true">
+        <dc:Bounds x="595" y="225" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="629" y="263" width="81" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_03lqjyd_di" bpmnElement="notifyEmployee">
+        <dc:Bounds x="570" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1dpnaco_di" bpmnElement="notifyHR">
+        <dc:Bounds x="570" y="350" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0szpf8c_di" bpmnElement="updateDB">
+        <dc:Bounds x="720" y="350" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0pxqmdf_di" bpmnElement="Flow_0pxqmdf">
+        <di:waypoint x="218" y="250" />
+        <di:waypoint x="270" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0qv03oz_di" bpmnElement="Flow_0qv03oz">
+        <di:waypoint x="370" y="250" />
+        <di:waypoint x="430" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1m94jcu_di" bpmnElement="Flow_1m94jcu">
+        <di:waypoint x="530" y="250" />
+        <di:waypoint x="595" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0tmpb82_di" bpmnElement="Flow_0tmpb82">
+        <di:waypoint x="670" y="120" />
+        <di:waypoint x="850" y="120" />
+        <di:waypoint x="850" y="250" />
+        <di:waypoint x="882" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ydwvdj_di" bpmnElement="Flow_1ydwvdj">
+        <di:waypoint x="820" y="390" />
+        <di:waypoint x="851" y="390" />
+        <di:waypoint x="851" y="250" />
+        <di:waypoint x="882" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_00j0f8f_di" bpmnElement="flowReject">
+        <di:waypoint x="620" y="225" />
+        <di:waypoint x="620" y="160" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="623" y="173" width="33" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0zfy4tf_di" bpmnElement="flowAccept">
+        <di:waypoint x="620" y="275" />
+        <di:waypoint x="620" y="350" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="623" y="323" width="34" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1sprm54_di" bpmnElement="Flow_1sprm54">
+        <di:waypoint x="670" y="390" />
+        <di:waypoint x="720" y="390" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
